@@ -10,12 +10,12 @@
   "scripts": {
     "clean:dist": "rimraf ./dist",
     "message": "babel-node ./build/message.js",
-    "build:dev": "NODE_ENV=local babel-node build/build-dev.js",
+    "build:dev": "set NODE_ENV=local&& babel-node build/build-dev.js",
     "build:prod": "babel-node ./build/build-prod.js",
-    "predev": "NODE_ENV=local npm-run-all --parallel clean:dist message",
-    "dev": "NODE_ENV=local npm-run-all build:dev",
-    "preprod": "NODE_ENV=production npm-run-all clean:dist message",
-    "prod": "NODE_ENV=production npm-run-all --parallel build:prod",
+    "predev": "set NODE_ENV=local&& npm-run-all --parallel clean:dist message",
+    "dev": "set NODE_ENV=local&& npm-run-all build:dev",
+    "preprod": "set NODE_ENV=production&& npm-run-all clean:dist message",
+    "prod": "set NODE_ENV=production&& npm-run-all --parallel build:prod",
     "start": "npm-run-all dev"
   },
   "devDependencies": {
