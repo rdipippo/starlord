@@ -43,14 +43,14 @@ class BootScene extends Phaser.Scene {
         this.add.image(400, 300, 'sky');
 
         //  The platforms group contains the ground and the 2 ledges we can jump on
-        this.platforms = this.physics.add.group();
+        this.platforms = this.physics.add.staticGroup();
 
         //  Here we create the ground.
         //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
         this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
         //  Now let's create some ledges
-        this.platforms.create(600, 400, 'ground');
+        this.platform1 = this.platforms.create(600, 400, 'ground');
         this.platforms.create(50, 250, 'ground');
         this.platforms.create(750, 220, 'ground');
 
@@ -66,6 +66,8 @@ class BootScene extends Phaser.Scene {
         this.bombs = new Bombs(this, this.player.sprite);
         this.bullets = this.player.bullets;
 
+        this.platformDirection = -1;
+
         //  The score
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
         this.levelText = this.add.text(16, 50, 'Level: 1', { fontSize: '32px', fill: '#000' });
@@ -78,14 +80,26 @@ class BootScene extends Phaser.Scene {
 
         //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
         this.physics.add.overlap(this.player.sprite, this.stars.group, this.collectStar, null, this);
-        this.physics.add.overlap(this.bullets, this.bombs.group, this.destroyBomb, null, this);
+        this.physics.add.overlap(this.player.gun.bullets, this.bombs.group, this.destroyBomb, null, this);
 
         this.physics.add.collider(this.player.sprite, this.bombs.group, this.hitBomb, null, this);
 
         this.bombs.createBomb();
     }
 
+
     update() {
+        if (this.level > 1) {
+            if (this.platform1.x <= 300) {
+                this.platformDirection = 1;
+            } else if (this.platform1.x > 500) {
+                this.platformDirection = -1;
+            }
+
+            this.platform1.x += 1 * this.platformDirection;
+            this.platform1.refreshBody();
+        }
+
         if (this.gameOver) {
             this.physics.pause();
 

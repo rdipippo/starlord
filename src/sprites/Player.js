@@ -1,9 +1,11 @@
+import Gun from './groups/Gun';
+
 export default class Player {
     constructor (scene, x, y, key) {
         this.scene = scene;
 
         this.sprite = this.scene.physics.add.sprite(x, y, key).setBounce(0.2).setCollideWorldBounds(true);
-        this.bullets = this.scene.physics.add.group();
+        this.gun = new Gun(scene, this);
 
         this.scene.anims.create({
             key: 'left',
@@ -46,42 +48,11 @@ export default class Player {
     }
 
     shoot() {
-        let velocity, xPos;
-
-        if (this.bullets.countActive(true) <= 5) {
-            if (this.isFacingLeft()) {
-                velocity = -200;
-                xPos = this.sprite.x - 25;
-            } else {
-                velocity = 200;
-                xPos = this.sprite.x + 25;
-            }
-
-            var bullet = this.bullets.create(xPos, this.sprite.y, 'star');
-            bullet.setVelocity(velocity, 0);
-            bullet.setCollideWorldBounds(false);
-            bullet.body.allowGravity = false;
-        }
+        this.gun.shoot();
     }
 
     update() {
-        var that = this;
-
-        this.bullets.children.iterate(function(bullet) {
-
-            if (bullet.visible) {
-                if (that.isFacingRight() && bullet.x >= that.sprite.x + 160) {
-                    bullet.visible = false;
-                    bullet.active = false;
-                } else if (that.isFacingLeft() && bullet.x <= that.sprite.x - 160) {
-                    bullet.visible = false;
-                    bullet.active = false;
-                } else if (bullet.x <=0 || bullet.y >=800) {
-                    bullet.visible = false;
-                    bullet.active = false;
-                }
-            }
-        });
+       this.gun.update();
     }
 
     isFacingLeft() {
