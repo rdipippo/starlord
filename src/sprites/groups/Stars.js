@@ -5,13 +5,13 @@ export default class Stars {
         this.scene = scene;
         this.group = this.scene.physics.add.group({
             key: 'star',
-            repeat: 11,
+            repeat: 25,
             setXY: { x: 12, y: 0, stepX: 70 }
         });
 
         this.group.children.iterate(function (child) {
             //  Give each star a slightly different bounce
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            //child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
         });
     }
 

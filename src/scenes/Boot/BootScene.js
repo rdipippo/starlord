@@ -36,18 +36,33 @@ class BootScene extends Phaser.Scene {
 
     create() {
         this.score = 0;
-        this.level = 1;
+        this.level = 5;
         this.time = 300;
         this.updateCount = 0;
 
         //  A simple background for our game
         this.add.image(400, 300, 'sky');
+        this.add.image(1200, 300, 'sky');
+        this.add.image(2000, 300, 'sky');
+        this.add.image(2800, 300, 'sky');
+        this.add.image(3600, 300, 'sky');
 
         //  The platforms group contains the ground and the 2 ledges we can jump on
         this.platforms = new Platforms(this);
 
+        this.ground = this.physics.add.group();
+
+        for (var i = 200; i <= 3600; i+=400) {
+            var groundSprite = this.ground.create(i, 568, 'ground').setScale(2);
+            groundSprite.body.allowGravity = false;
+            groundSprite.body.immovable = true;
+        }
+
         // The player and its settings
-        this.player = new Player(this, 100, 450, 'dude');
+        this.player = new Player(this, 400, 450, 'dude');
+
+        this.physics.world.setBounds(0, 0, 3500, this.physics.world.height);
+        this.cameras.main.setBounds(0, 0, 3200, 600);
 
         //  Input Events
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -59,13 +74,19 @@ class BootScene extends Phaser.Scene {
 
         //  The score
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+        this.scoreText.setScrollFactor(0)
         this.levelText = this.add.text(16, 50, 'Level: 1', { fontSize: '32px', fill: '#000' });
+        this.levelText.setScrollFactor(0)
         this.timerText = this.add.text(585, 16, 'Time: 300', { fontSize: '32px', fill: '#000' });
+        this.timerText.setScrollFactor(0)
 
         //  Collide the player and the stars with the platforms
-        this.physics.add.collider(this.player.sprite, this.platforms.group);
-        this.physics.add.collider(this.stars.group, this.platforms.group);
+        this.physics.add.collider(this.player.sprite, this.platforms.group, this.standOnPlatform, null, this);
+        this.physics.add.collider(this.player.sprite, this.ground, this.player.hitGround, null, this);
+        this.physics.add.collider(this.stars.group, this.platforms.group, this.starHitsPlatform, null, this);
         this.physics.add.collider(this.bombs.group, this.platforms.group);
+        this.physics.add.collider(this.stars.group, this.ground);
+        this.physics.add.collider(this.bombs.group, this.ground);
 
         //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
         this.physics.add.overlap(this.player.sprite, this.stars.group, this.collectStar, null, this);
@@ -76,8 +97,17 @@ class BootScene extends Phaser.Scene {
         this.bombs.createBomb();
     }
 
+    standOnPlatform(player, platform) {
+        this.player.standOnPlatform(platform);
+    }
+
+    starHitsPlatform(star, platform) {
+        star.body.velocity.x = platform.body.velocity.x;
+    }
 
     update() {
+        this.cameras.main.scrollX = this.player.sprite.x - 400;
+
         if (this.gameOver) {
             this.physics.pause();
 

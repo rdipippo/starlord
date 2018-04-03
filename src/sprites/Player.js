@@ -4,6 +4,7 @@ export default class Player {
     constructor (scene, x, y, key) {
         this.scene = scene;
 
+        this.standingOnPlatform = false;
         this.sprite = this.scene.physics.add.sprite(x, y, key).setBounce(0.2).setCollideWorldBounds(true);
         this.gun = new Gun(scene, this);
 
@@ -39,8 +40,23 @@ export default class Player {
     }
 
     stopMoving() {
-        this.sprite.body.setVelocityX(0);
+        if (this.standingOnPlatform !== true) {
+            this.sprite.body.setVelocityX(0);
+        }
+
         this.sprite.anims.stop();
+    }
+
+    hitGround() {
+        this.player.standingOnPlatform = false;
+        if (this.player.sprite != null && this.player.sprite.body != null) {
+            this.player.sprite.body.setVelocityX(0);
+        }
+    }
+
+    standOnPlatform(platform) {
+        this.sprite.body.setVelocityX(platform.body.velocity.x);
+        this.standingOnPlatform = true;
     }
 
     jump() {
