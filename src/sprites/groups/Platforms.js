@@ -4,21 +4,33 @@ export default class Platforms {
         this.group = this.scene.physics.add.group();
 
         //  Now let's create some ledges
-        this.platform1 = this.createPlatform(600, 400, 300, 500, -1);
-        this.platform2 = this.createPlatform(50, 250, 50, 350, -1);
-        this.platform3 = this.createPlatform(750, 220, 550, 750, -1);
+        this.platform1 = this.createPlatform(600, 400, 300, 500);
+        this.platform2 = this.createPlatform(50, 250, 50, 350);
+        this.platform3 = this.createPlatform(750, 220, 550, 750);
+        this.platform4 = this.createPlatform(1000, 75, 850, 1200);
+        this.platform5 = this.createPlatform(1200, 250, 1100, 1300, true);
     }
 
-    createPlatform(x, y, minimumX, maximumX) {
-        var platform = this.group.create(x, y, 'ground');
+    createPlatform(x, y, minimumX, maximumX, isVertical) {
+        let platform;
+
+        if (isVertical) {
+            platform = this.group.create(x, y, 'verticalPlatform');
+        } else {
+            platform = this.group.create(x, y, 'ground');
+        }
+
         //platform.platformDirection = -1;
         platform.body.allowGravity = false;
         platform.body.immovable = true;
         platform.initialX = x;
         platform.initialY = y;
-        platform.minimumX = minimumX;
-        platform.maximumX = maximumX;
-        platform.body.setVelocityX(100);
+
+        if (minimumX !== undefined && maximumX !== undefined) {
+            platform.minimumX = minimumX;
+            platform.maximumX = maximumX;
+            platform.body.setVelocityX(100);
+        }
 
         return platform;
     }
@@ -35,6 +47,12 @@ export default class Platforms {
         if (this.scene.level > 3) {
             this.movePlatform(this.platform3);
         }
+
+        if (this.scene.level > 3) {
+            this.movePlatform(this.platform4);
+        }
+
+        this.movePlatform(this.platform5);
     }
 
     movePlatform(platform) {
@@ -43,8 +61,5 @@ export default class Platforms {
         } else if (platform.x > platform.maximumX) {
             platform.body.setVelocityX(-100);
         }
-
-        /*platform.x += 1 * platform.platformDirection;
-        platform;*/
     }
 }

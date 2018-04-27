@@ -12,6 +12,20 @@ export default class Stars {
         this.group.children.iterate(function (child) {
             //  Give each star a slightly different bounce
             //child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            child.setCollideWorldBounds(true);
+        });
+    }
+
+    update() {
+        const result = this.group.children.entries.filter(star => star.body.velocity.y > 0);
+        result.forEach(function (child) {
+            //  Give each star a slightly different bounce
+            //child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            if (child.body.y >= 400) {
+                child.body.allowGravity = false;
+                child.body.immovable = true;
+                child.body.velocity.y = 0;
+            }
         });
     }
 

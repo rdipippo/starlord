@@ -1,19 +1,22 @@
 import Phaser from 'phaser';
 import bombImg from './../../assets/images/bomb.png';
 import groundImg from './../../assets/images/platform.png';
+import verticalPlatformImg from './../../assets/images/verticalPlatform.png';
 import starImg from './../../assets/images/star.png';
 import skyImg from './../../assets/images/sky.png';
 import playerSS from './../../assets/spritesheets/dude.png';
 import Player from './../../sprites/Player';
+import enemySS from './../../assets/spritesheets/enemy.png';
 import Stars from './../../sprites/groups/Stars';
 import Bombs from './../../sprites/groups/Bombs';
+import EnemyGroup from './../../sprites/groups/EnemyGroup';
 import Platforms from './../../sprites/groups/Platforms';
 
 class BootScene extends Phaser.Scene {
     constructor(config) {
         super({
             key: 'Boot',
-            type: Phaser.AUTO,
+            type: Phaser.CANVAS,
             width: 800,
             height: 600,
             physics: {
@@ -31,7 +34,9 @@ class BootScene extends Phaser.Scene {
         this.load.image('ground', groundImg);
         this.load.image('star', starImg);
         this.load.image('bomb', bombImg);
-        this.load.spritesheet('dude', playerSS, { frameWidth: 32, frameHeight: 48 });
+        this.load.image('verticalPlatform', verticalPlatformImg);
+        this.load.spritesheet('dude', playerSS, {frameWidth: 32, frameHeight: 48});
+        this.load.spritesheet('enemy', enemySS, {frameWidth: 34, frameHeight: 40});
     }
 
     create() {
@@ -41,19 +46,17 @@ class BootScene extends Phaser.Scene {
         this.updateCount = 0;
 
         //  A simple background for our game
-        this.add.image(400, 300, 'sky');
-        this.add.image(1200, 300, 'sky');
-        this.add.image(2000, 300, 'sky');
-        this.add.image(2800, 300, 'sky');
-        this.add.image(3600, 300, 'sky');
+        for (var j=400; j<=3600; j+=800) {
+            this.add.image(j, 300, 'sky');
+        }
 
         //  The platforms group contains the ground and the 2 ledges we can jump on
         this.platforms = new Platforms(this);
 
         this.ground = this.physics.add.group();
 
-        for (var i = 200; i <= 3600; i+=400) {
-            var groundSprite = this.ground.create(i, 568, 'ground').setScale(2);
+        for (var i = 200; i <= 3600; i += 300) {
+            var groundSprite = this.ground.create(i, 568, 'ground');
             groundSprite.body.allowGravity = false;
             groundSprite.body.immovable = true;
         }
@@ -61,7 +64,13 @@ class BootScene extends Phaser.Scene {
         // The player and its settings
         this.player = new Player(this, 400, 450, 'dude');
 
-        this.physics.world.setBounds(0, 0, 3500, this.physics.world.height);
+        this.enemyGroup = new EnemyGroup(this);
+
+        this.physics.add.collider(this.enemyGroup.group, this.ground, null, null, this);
+        this.physics.add.collider(this.enemyGroup.group, this.player.sprite, this.hitBomb, null, this);
+        this.physics.add.overlap(this.player.gun.bullets, this.enemyGroup.group, this.destroyBomb, null, this);
+
+        this.physics.world.setBounds(0, 0, 3500, 650);
         this.cameras.main.setBounds(0, 0, 3200, 600);
 
         //  Input Events
@@ -73,12 +82,9 @@ class BootScene extends Phaser.Scene {
         this.bullets = this.player.bullets;
 
         //  The score
-        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        this.scoreText.setScrollFactor(0)
-        this.levelText = this.add.text(16, 50, 'Level: 1', { fontSize: '32px', fill: '#000' });
-        this.levelText.setScrollFactor(0)
-        this.timerText = this.add.text(585, 16, 'Time: 300', { fontSize: '32px', fill: '#000' });
-        this.timerText.setScrollFactor(0)
+        this.scoreText = this.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#000'}).setScrollFactor(0)
+        this.levelText = this.add.text(16, 50, 'Level: 1', {fontSize: '32px', fill: '#000'}).setScrollFactor(0)
+        this.timerText = this.add.text(585, 16, 'Time: 300', {fontSize: '32px', fill: '#000'}).setScrollFactor(0)
 
         //  Collide the player and the stars with the platforms
         this.physics.add.collider(this.player.sprite, this.platforms.group, this.standOnPlatform, null, this);
@@ -106,7 +112,15 @@ class BootScene extends Phaser.Scene {
     }
 
     update() {
+        if (this.gameOverComplete) {
+            return;
+        }
+
         this.cameras.main.scrollX = this.player.sprite.x - 400;
+
+        if (this.player != null && this.player.sprite != null && this.player.sprite.body != null && this.player.sprite.body.y > 595) {
+            this.gameOver = true;
+        }
 
         if (this.gameOver) {
             this.physics.pause();
@@ -119,7 +133,8 @@ class BootScene extends Phaser.Scene {
                 gameOverMessage = 'GAME OVER';
             }
 
-            this.add.text(16, 88, gameOverMessage, { fontSize: '32px', fill: '#000' });
+            var gameOverText = this.add.text(16, 88, gameOverMessage, {fontSize: '32px', fill: '#000'}).setScrollFactor(0);
+            this.gameOverComplete = true;
             return;
         }
 
@@ -127,6 +142,7 @@ class BootScene extends Phaser.Scene {
 
         this.platforms.update();
         this.player.update();
+        this.stars.update();
 
         if (this.shoot.isDown) {
             this.player.shoot();
@@ -152,7 +168,7 @@ class BootScene extends Phaser.Scene {
         this.increaseScore(50);
     }
 
-    collectStar (player, star) {
+    collectStar(player, star) {
         star.disableBody(true, true);
 
         //  Add and update the score
@@ -192,7 +208,7 @@ class BootScene extends Phaser.Scene {
         this.time = 300;
     }
 
-    hitBomb (player, bomb) {
+    hitBomb(player, bomb) {
         this.player.showDeathScene();
         this.gameOver = true;
     }

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BootScene from './scenes/Boot/BootScene';
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: 800,
     height: 600,
     title: 'Game',
