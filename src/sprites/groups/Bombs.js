@@ -1,7 +1,9 @@
-export default class Bombs {
+import Phaser from 'phaser';
+import SpriteGroup from './SpriteGroup';
+
+export default class Bombs extends SpriteGroup {
     constructor(scene, playerSprite) {
-        this.scene = scene;
-        this.group = scene.physics.add.group();
+        super(scene);
         this.playerSprite = playerSprite;
     }
 
@@ -20,5 +22,21 @@ export default class Bombs {
 
         bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
         bomb.allowGravity = false;
+    }
+
+    handleGround() {
+        this.scene.physics.add.collider(this.group, this.scene.ground);
+    }
+
+    handlePlayer() {
+        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, this.scene.hitBomb, null, this.scene);
+    }
+
+    handleBullets() {
+        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, this.scene.destroyBomb, null, this);
+    }
+
+    handlePlatforms() {
+        this.scene.physics.add.collider(this.group, this.scene.platforms.group);
     }
 }

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
+import SpriteGroup from './SpriteGroup';
 
-export default class EnemyGroup {
+export default class EnemyGroup extends SpriteGroup {
     constructor(scene) {
-        this.scene = scene;
-        this.group = this.scene.physics.add.group();
+        super(scene);
 
         this.group.create(470, 450, 'enemy');
 
@@ -16,8 +16,23 @@ export default class EnemyGroup {
 
         this.group.children.iterate(function (child) {
             child.setCollideWorldBounds(true);
-            //child.anims.play('lookMenacing', true);
+            child.anims.play('lookMenacing', true);
         });
+    }
 
+    handleGround() {
+        this.scene.physics.add.collider(this.group, this.scene.ground, null, null, this.scene);
+    }
+
+    handlePlatforms() {
+        this.scene.physics.add.collider(this.group, this.scene.platforms.group, null, null, this.scene);
+    }
+
+    handlePlayer() {
+        this.scene.physics.add.collider(this.group, this.scene.player.sprite, this.scene.hitBomb, null, this.scene);
+    }
+
+    handleBullets() {
+        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, this.scene.destroyBomb, null, this.scene);
     }
 }

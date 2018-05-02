@@ -1,18 +1,12 @@
 import Phaser from 'phaser';
-import bombImg from './../../assets/images/bomb.png';
-import groundImg from './../../assets/images/platform.png';
-import verticalPlatformImg from './../../assets/images/verticalPlatform.png';
-import starImg from './../../assets/images/star.png';
-import skyImg from './../../assets/images/sky.png';
-import playerSS from './../../assets/spritesheets/dude.png';
-import Player from './../../sprites/Player';
-import enemySS from './../../assets/spritesheets/enemy.png';
 import Stars from './../../sprites/groups/Stars';
 import Bombs from './../../sprites/groups/Bombs';
 import EnemyGroup from './../../sprites/groups/EnemyGroup';
 import Platforms from './../../sprites/groups/Platforms';
+import StarLordScene from './../StarLordScene';
+import Player from './../../sprites/Player';
 
-class BootScene extends Phaser.Scene {
+class BootScene extends StarLordScene {
     constructor(config) {
         super({
             key: 'Boot',
@@ -30,13 +24,7 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('sky', skyImg);
-        this.load.image('ground', groundImg);
-        this.load.image('star', starImg);
-        this.load.image('bomb', bombImg);
-        this.load.image('verticalPlatform', verticalPlatformImg);
-        this.load.spritesheet('dude', playerSS, {frameWidth: 32, frameHeight: 48});
-        this.load.spritesheet('enemy', enemySS, {frameWidth: 34, frameHeight: 40});
+        super.preload();
     }
 
     create() {
@@ -45,7 +33,7 @@ class BootScene extends Phaser.Scene {
         this.time = 300;
         this.updateCount = 0;
 
-        //  A simple background for our game
+        //  A simplhe background for our game
         for (var j=400; j<=3600; j+=800) {
             this.add.image(j, 300, 'sky');
         }
@@ -66,10 +54,6 @@ class BootScene extends Phaser.Scene {
 
         this.enemyGroup = new EnemyGroup(this);
 
-        this.physics.add.collider(this.enemyGroup.group, this.ground, null, null, this);
-        this.physics.add.collider(this.enemyGroup.group, this.player.sprite, this.hitBomb, null, this);
-        this.physics.add.overlap(this.player.gun.bullets, this.enemyGroup.group, this.destroyBomb, null, this);
-
         this.physics.world.setBounds(0, 0, 3500, 650);
         this.cameras.main.setBounds(0, 0, 3200, 600);
 
@@ -89,16 +73,6 @@ class BootScene extends Phaser.Scene {
         //  Collide the player and the stars with the platforms
         this.physics.add.collider(this.player.sprite, this.platforms.group, this.standOnPlatform, null, this);
         this.physics.add.collider(this.player.sprite, this.ground, this.player.hitGround, null, this);
-        this.physics.add.collider(this.stars.group, this.platforms.group, this.starHitsPlatform, null, this);
-        this.physics.add.collider(this.bombs.group, this.platforms.group);
-        this.physics.add.collider(this.stars.group, this.ground);
-        this.physics.add.collider(this.bombs.group, this.ground);
-
-        //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-        this.physics.add.overlap(this.player.sprite, this.stars.group, this.collectStar, null, this);
-        this.physics.add.overlap(this.player.gun.bullets, this.bombs.group, this.destroyBomb, null, this);
-
-        this.physics.add.collider(this.player.sprite, this.bombs.group, this.hitBomb, null, this);
 
         this.bombs.createBomb();
     }

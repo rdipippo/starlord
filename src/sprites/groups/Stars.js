@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
+import SpriteGroup from './SpriteGroup';
 
-export default class Stars {
+export default class Stars extends SpriteGroup {
     constructor(scene) {
-        this.scene = scene;
-        this.group = this.scene.physics.add.group({
-            key: 'star',
-            repeat: 25,
-            setXY: { x: 12, y: 0, stepX: 70 }
-        });
+        super(scene, {
+                   key: 'star',
+                   repeat: 25,
+                   setXY: { x: 12, y: 0, stepX: 70 }
+                 });
 
         this.group.children.iterate(function (child) {
             //  Give each star a slightly different bounce
@@ -37,5 +37,20 @@ export default class Stars {
         this.group.children.iterate(function (child) {
             child.enableBody(true, child.x, 0, true, true);
         });
+    }
+
+    handleGround() {
+        this.scene.physics.add.collider(this.group, this.scene.ground);
+    }
+
+    handlePlayer() {
+        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, this.scene.collectStar, null, this.scene);
+    }
+
+    handleBullets() {
+    }
+
+    handlePlatforms() {
+        this.scene.physics.add.collider(this.group, this.scene.platforms.group, this.scene.starHitsPlatform, null, this);
     }
 }
