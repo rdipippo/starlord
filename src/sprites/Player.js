@@ -48,9 +48,9 @@ export default class Player {
     }
 
     hitGround() {
-        this.player.standingOnPlatform = false;
-        if (this.player.sprite != null && this.player.sprite.body != null) {
-            this.player.sprite.body.setVelocityX(0);
+        this.standingOnPlatform = false;
+        if (this.sprite != null && this.sprite.body != null) {
+            this.sprite.body.setVelocityX(0);
         }
     }
 

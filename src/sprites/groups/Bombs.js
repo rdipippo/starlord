@@ -25,15 +25,15 @@ export default class Bombs extends SpriteGroup {
     }
 
     handleGround() {
-        this.scene.physics.add.collider(this.group, this.scene.ground);
+        this.scene.physics.add.collider(this.group, this.scene.ground.group);
     }
 
     handlePlayer() {
-        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, this.scene.hitBomb, null, this.scene);
+        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, super.killPlayer, null, this);
     }
 
     handleBullets() {
-        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, this.scene.destroyBomb, null, this);
+        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, super.destroyedByBullet, null, this);
     }
 
     handlePlatforms() {

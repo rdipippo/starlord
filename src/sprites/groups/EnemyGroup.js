@@ -21,7 +21,7 @@ export default class EnemyGroup extends SpriteGroup {
     }
 
     handleGround() {
-        this.scene.physics.add.collider(this.group, this.scene.ground, null, null, this.scene);
+        this.scene.physics.add.collider(this.group, this.scene.ground.group, null, null, this.scene);
     }
 
     handlePlatforms() {
@@ -29,10 +29,10 @@ export default class EnemyGroup extends SpriteGroup {
     }
 
     handlePlayer() {
-        this.scene.physics.add.collider(this.group, this.scene.player.sprite, this.scene.hitBomb, null, this.scene);
+        this.scene.physics.add.collider(this.group, this.scene.player.sprite, super.killPlayer, null, this);
     }
 
     handleBullets() {
-        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, this.scene.destroyBomb, null, this.scene);
+        this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, super.destroyedByBullet, null, this);
     }
 }

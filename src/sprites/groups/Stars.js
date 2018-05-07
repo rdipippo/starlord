@@ -39,18 +39,36 @@ export default class Stars extends SpriteGroup {
         });
     }
 
+    collectStar(player, star) {
+        star.disableBody(true, true);
+
+        //  Add and update the score
+        this.scene.increaseScore(10);
+
+        if (this.haveAllStarsBeenCollected()) {
+            //  A new batch of stars to collect
+            this.regenerateStars();
+            this.scene.bombs.createBomb();
+            this.scene.incrementLevel();
+        }
+    }
+
+    starHitsPlatform(star, platform) {
+        star.body.velocity.x = platform.body.velocity.x;
+    }
+
     handleGround() {
         this.scene.physics.add.collider(this.group, this.scene.ground);
     }
 
     handlePlayer() {
-        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, this.scene.collectStar, null, this.scene);
+        this.scene.physics.add.overlap(this.scene.player.sprite, this.group, this.collectStar, null, this);
     }
 
     handleBullets() {
     }
 
     handlePlatforms() {
-        this.scene.physics.add.collider(this.group, this.scene.platforms.group, this.scene.starHitsPlatform, null, this);
+        this.scene.physics.add.collider(this.group, this.scene.platforms.group, this.starHitsPlatform, null, this);
     }
 }
