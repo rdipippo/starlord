@@ -9,18 +9,18 @@ import enemySS from './../assets/spritesheets/enemy.png';
 
 export default class StarLordScene extends Phaser.Scene {
     constructor(config = {
-                                     key: 'Boot',
-                                     type: Phaser.CANVAS,
-                                     width: 800,
-                                     height: 600,
-                                     physics: {
-                                         default: 'arcade',
-                                         arcade: {
-                                             gravity: {y: 300},
-                                             debug: false
-                                         }
-                                     }
-                                 }) {
+                     key: 'Boot',
+                     type: Phaser.CANVAS,
+                     width: 800,
+                     height: 600,
+                     physics: {
+                         default: 'arcade',
+                             arcade: {
+                                 gravity: {y: 300},
+                                 debug: false
+                             }
+                         }
+                     }) {
         super(config);
     }
 
@@ -59,6 +59,26 @@ export default class StarLordScene extends Phaser.Scene {
 
     update() {
         if (this.gameOverComplete) {
+            return;
+        }
+
+        if (this.player.getPosition().x > 3200) {
+            this.addText(550, 50, 'LEVEL COMPLETE');
+            var that = this;
+            var id = window.setInterval(function() {
+                if (that.time <= 0) {
+                    window.clearInterval(id);
+                    that.physics.pause();
+                    var nextId = window.setTimeout(function() {
+                        that.scene.stop('Boot')
+                        that.scene.start('Map');
+                    }, 1000);
+                } else {
+                    that.increaseScore(10);
+                    that.timerText.setText('Time: ' + --that.time);
+                }
+            }, 100);
+
             return;
         }
 
@@ -105,7 +125,7 @@ export default class StarLordScene extends Phaser.Scene {
     }
 
     addText(x, y, text) {
-        return this.add.text(x, y, text, {fontSize: '32px', fill: '#000'}).setScrollFactor(0);
+        return this.add.text(x, y, text, {fontSize: '24px', fill: '#000'}).setScrollFactor(0);
     }
 
     decrementTimer() {

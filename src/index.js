@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+//import BootScene from './scenes/Boot/BootScene';
+import MapScene from './scenes/MapScene';
 import BootScene from './scenes/Boot/BootScene';
 
 const config = {
@@ -10,7 +12,7 @@ const config = {
     banner: {
         hidePhaser: true
     },
-    scene: [BootScene]
+    scene: [MapScene, BootScene]
 };
 
 class AppGame extends Phaser.Game {

@@ -2,10 +2,14 @@ import Phaser from 'phaser';
 import SpriteGroup from './SpriteGroup';
 
 export default class EnemyGroup extends SpriteGroup {
-    constructor(scene) {
+    constructor(scene, config) {
         super(scene);
 
-        this.group.create(470, 450, 'enemy');
+        this.config = config;
+
+        this.config.forEach((enemy) => {
+            this.group.create(470, 450, 'enemy');
+        });
 
         this.scene.anims.create({
             key: 'lookMenacing',

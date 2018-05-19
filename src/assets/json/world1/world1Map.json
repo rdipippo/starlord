@@ -1,0 +1,13 @@
+{
+    "levels": [
+        {
+            "name": "Level 1",
+            "index": 1,
+            "mapPosition": {"x": 390, "y": 550},
+            "pathLocation": {
+                "x": 385, "y": 550, "width": 10 , "height": 50
+            },
+            "sceneKey": "Boot"
+        }
+    ]
+}

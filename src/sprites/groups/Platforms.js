@@ -1,24 +1,27 @@
-export default class Platforms {
-    constructor(scene) {
-        this.scene = scene;
-        this.group = this.scene.physics.add.group();
+import SpriteGroup from './SpriteGroup';
 
-        //  Now let's create some ledges
-        this.platform1 = this.createPlatform(600, 400, 300, 500);
-        this.platform2 = this.createPlatform(50, 250, 50, 350);
-        this.platform3 = this.createPlatform(750, 220, 550, 750);
-        this.platform4 = this.createPlatform(1000, 75, 850, 1200);
-        this.platform5 = this.createPlatform(1200, 250, 1100, 1300, true);
+export default class Platforms extends SpriteGroup {
+    constructor(scene, config) {
+        super(scene);
+
+        this.config = config;
+
+        this.platforms = [];
+
+        this.config.forEach((platform) => {
+            let ref = this.createPlatform(platform.x, platform.y, platform.movement.minX, platform.movement.maxX);
+            this.platforms.push(ref);
+        });
     }
 
     createPlatform(x, y, minimumX, maximumX, isVertical) {
         let platform;
 
-        if (isVertical) {
-            platform = this.group.create(x, y, 'verticalPlatform');
-        } else {
+        //if (isVertical) {
+        //    platform = this.group.create(x, y, 'verticalPlatform');
+        //} else {
             platform = this.group.create(x, y, 'ground');
-        }
+        //}
 
         //platform.platformDirection = -1;
         platform.body.allowGravity = false;
@@ -36,23 +39,9 @@ export default class Platforms {
     }
 
     update() {
-        if (this.scene.level > 1) {
-            this.movePlatform(this.platform1);
-        }
-
-        if (this.scene.level > 2) {
-            this.movePlatform(this.platform2);
-        }
-
-        if (this.scene.level > 3) {
-            this.movePlatform(this.platform3);
-        }
-
-        if (this.scene.level > 3) {
-            this.movePlatform(this.platform4);
-        }
-
-        this.movePlatform(this.platform5);
+        this.platforms.forEach((platform) => {
+            this.movePlatform(platform);
+        });
     }
 
     movePlatform(platform) {
@@ -62,4 +51,24 @@ export default class Platforms {
             platform.body.setVelocityX(-100);
         }
     }
+
+    standOnPlatform(player, platform) {
+        this.scene.player.standOnPlatform(platform);
+    }
+
+    handleGround() {
+
+    }
+
+     handlePlayer() {
+         this.scene.physics.add.collider(this.scene.player.sprite, this.group, this.standOnPlatform, null, this);
+     }
+
+     handleBullets() {
+
+     }
+
+     handlePlatforms() {
+
+     }
 }

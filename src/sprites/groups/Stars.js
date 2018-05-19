@@ -45,12 +45,11 @@ export default class Stars extends SpriteGroup {
         //  Add and update the score
         this.scene.increaseScore(10);
 
-        if (this.haveAllStarsBeenCollected()) {
-            //  A new batch of stars to collect
+        /*if (this.haveAllStarsBeenCollected()) {
             this.regenerateStars();
             this.scene.bombs.createBomb();
             this.scene.incrementLevel();
-        }
+        }*/
     }
 
     starHitsPlatform(star, platform) {

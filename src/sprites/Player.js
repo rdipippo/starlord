@@ -71,6 +71,10 @@ export default class Player {
        this.gun.update();
     }
 
+    getPosition() {
+        return { x: this.sprite.body.x, y: this.sprite.body.y };
+    }
+
     isFacingLeft() {
         return this.sprite.anims.currentAnim != null && this.sprite.anims.currentAnim.key == 'left';
     }
