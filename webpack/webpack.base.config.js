@@ -35,7 +35,7 @@ export default new WebpackConfig().merge({
         loader: 'file-loader?name=[path][name].[ext]&limit=1000'
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/i,
+        test: /\.(jpe?g|png|json|gif|svg)$/i,
         exclude: [/node_modules/, resolve('src/fonts')],
         loader: 'file-loader?name=[path][name].[ext]'
       },

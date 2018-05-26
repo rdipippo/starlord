@@ -1,4 +1,10 @@
 import Phaser from 'phaser';
+import Ground from './../sprites/groups/Ground';
+import Stars from './../sprites/groups/Stars';
+import Bombs from './../sprites/groups/Bombs';
+import EnemyGroup from './../sprites/groups/EnemyGroup';
+import Platforms from './../sprites/groups/Platforms';
+import Player from './../sprites/Player';
 import bombImg from './../assets/images/bomb.png';
 import groundImg from './../assets/images/platform.png';
 import verticalPlatformImg from './../assets/images/verticalPlatform.png';
@@ -7,9 +13,16 @@ import skyImg from './../assets/images/sky.png';
 import playerSS from './../assets/spritesheets/dude.png';
 import enemySS from './../assets/spritesheets/enemy.png';
 
+// arcade physics can't handle beveled edge of platforms.
+// player not tinted red on death
+// if you collect a star while holding down jump, you jump again after collecting the star.
+// bombs seem to be destroyed when bullets are nowhere near them.
+//
+// new levels
+// map
 export default class StarLordScene extends Phaser.Scene {
     constructor(config = {
-                     key: 'Boot',
+                     key: 'StarLordScene',
                      type: Phaser.CANVAS,
                      width: 800,
                      height: 600,
@@ -24,6 +37,12 @@ export default class StarLordScene extends Phaser.Scene {
         super(config);
     }
 
+    init(data) {
+        this.world = data.world;
+        this.level = data.level;
+        this.jsonFile = "src/assets/json/world" + this.world + "/level" + this.level + ".json";
+    }
+
     preload() {
         this.load.image('sky', skyImg);
         this.load.image('ground', groundImg);
@@ -32,11 +51,14 @@ export default class StarLordScene extends Phaser.Scene {
         this.load.image('verticalPlatform', verticalPlatformImg);
         this.load.spritesheet('dude', playerSS, {frameWidth: 32, frameHeight: 48});
         this.load.spritesheet('enemy', enemySS, {frameWidth: 34, frameHeight: 40});
+        this.load.json("levelConfig", this.jsonFile);
     }
 
-    create(level, time) {
-        this.level = level;
-        this.time = time;
+    create() {
+        this.levelConfig = this.cache.json.get('levelConfig');
+
+        this.level = this.levelConfig.level;
+        this.time = this.levelConfig.time;
         this.score = 0;
         this.updateCount = 0;
 
@@ -53,8 +75,24 @@ export default class StarLordScene extends Phaser.Scene {
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
 
         this.scoreText = this.addText(16, 16, 'Score: 0');
-        this.levelText = this.addText(16, 50, 'Level: ' + level);
-        this.timerText = this.addText(585, 16, 'Time: ' + time);
+        this.levelText = this.addText(16, 50, 'Level: ' + this.level);
+        this.timerText = this.addText(585, 16, 'Time: ' + this.time);
+
+        //this.levelConfig = this.cache.json.get('levelConfig');
+        // The player and its settings
+        this.player = new Player(this, this.levelConfig.playerStart.x, this.levelConfig.playerStart.y, 'dude');
+
+        //  The platforms group contains the ground and the 2 ledges we can jump on
+        this.platforms = new Platforms(this, this.levelConfig.platforms);
+
+        this.ground = new Ground(this);
+
+        this.enemyGroup = new EnemyGroup(this, this.levelConfig.enemies);
+        this.stars = new Stars(this);
+        this.bombs = new Bombs(this, this.player.sprite);
+        this.bullets = this.player.bullets;
+
+        this.bombs.createBomb(this.levelConfig.bombs);
     }
 
     update() {
@@ -70,8 +108,8 @@ export default class StarLordScene extends Phaser.Scene {
                     window.clearInterval(id);
                     that.physics.pause();
                     var nextId = window.setTimeout(function() {
-                        that.scene.stop('Boot')
-                        that.scene.start('Map');
+                        that.scene.stop('StarLordScene')
+                        that.scene.start('Map', { worldNum: this.world });
                     }, 1000);
                 } else {
                     that.increaseScore(10);
@@ -122,6 +160,10 @@ export default class StarLordScene extends Phaser.Scene {
         if (this.cursors.up.isDown && this.player.sprite.body.touching.down) {
             this.player.jump();
         }
+
+        this.platforms.update();
+        this.player.update();
+        this.stars.update();
     }
 
     addText(x, y, text) {

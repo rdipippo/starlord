@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-//import BootScene from './scenes/Boot/BootScene';
 import MapScene from './scenes/MapScene';
-import BootScene from './scenes/Boot/BootScene';
+import StarLordScene from './scenes/StarLordScene';
+import level1Config from './assets/json/world1/level1.json';
 
 const config = {
     type: Phaser.CANVAS,
@@ -12,7 +12,7 @@ const config = {
     banner: {
         hidePhaser: true
     },
-    scene: [MapScene, BootScene]
+    scene: [MapScene, StarLordScene]
 };
 
 class AppGame extends Phaser.Game {
@@ -22,3 +22,4 @@ class AppGame extends Phaser.Game {
 }
 
 let game = new AppGame(config);
+game.scene.start('Map', { worldNum: 1 });

@@ -1,4 +1,6 @@
 {
+    "level": 1,
+    "time": 300,
     "enemies": [{"x": 470, "y": 450}],
     "bombs": { "count": 2 },
     "platforms": [
