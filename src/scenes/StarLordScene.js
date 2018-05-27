@@ -96,7 +96,14 @@ export default class StarLordScene extends Phaser.Scene {
     }
 
     update() {
-        if (this.gameOverComplete) {
+        if (this.gameOverComplete == true) {
+            this.gameOverComplete = false;
+            this.gameOver = false;
+            var that = this;
+            let nextId = window.setTimeout(function() {
+                that.scene.stop('StarLordScene')
+                that.scene.start('Map', { worldNum: this.world });
+            }, 1000);
             return;
         }
 
@@ -107,7 +114,7 @@ export default class StarLordScene extends Phaser.Scene {
                 if (that.time <= 0) {
                     window.clearInterval(id);
                     that.physics.pause();
-                    var nextId = window.setTimeout(function() {
+                    let nextId = window.setTimeout(function() {
                         that.scene.stop('StarLordScene')
                         that.scene.start('Map', { worldNum: this.world });
                     }, 1000);
@@ -133,9 +140,9 @@ export default class StarLordScene extends Phaser.Scene {
             let gameOverMessage;
 
             if (this.time == 0) {
-                gameOverMessage = 'GAME OVER - OUT OF TIME';
+                gameOverMessage = 'OUT OF TIME';
             } else {
-                gameOverMessage = 'GAME OVER';
+                gameOverMessage = 'BETTER LUCK NEXT TIME';
             }
 
             var gameOverText = this.add.text(16, 88, gameOverMessage, {fontSize: '32px', fill: '#000'}).setScrollFactor(0);
