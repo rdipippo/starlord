@@ -12,7 +12,7 @@ import starImg from './../assets/images/star.png';
 import skyImg from './../assets/images/sky.png';
 import playerSS from './../assets/spritesheets/dude.png';
 import enemySS from './../assets/spritesheets/enemy.png';
-
+import Storage from '../util/Storage';
 // arcade physics can't handle beveled edge of platforms.
 // player not tinted red on death
 // if you collect a star while holding down jump, you jump again after collecting the star.
@@ -78,8 +78,6 @@ export default class StarLordScene extends Phaser.Scene {
         this.levelText = this.addText(16, 50, 'Level: ' + this.level);
         this.timerText = this.addText(585, 16, 'Time: ' + this.time);
 
-        //this.levelConfig = this.cache.json.get('levelConfig');
-        // The player and its settings
         this.player = new Player(this, this.levelConfig.playerStart.x, this.levelConfig.playerStart.y, 'dude');
 
         //  The platforms group contains the ground and the 2 ledges we can jump on
@@ -96,19 +94,26 @@ export default class StarLordScene extends Phaser.Scene {
     }
 
     update() {
+        if (this.skipUpdate) {
+            return;
+        }
+
         if (this.gameOverComplete == true) {
             this.gameOverComplete = false;
             this.gameOver = false;
             var that = this;
+            this.skipUpdate = true;
             let nextId = window.setTimeout(function() {
-                that.scene.stop('StarLordScene')
+                that.scene.stop('StarLordScene');
+                that.skipUpdate = false;
                 that.scene.start('Map', { worldNum: this.world });
             }, 1000);
             return;
         }
 
-        if (this.player.getPosition().x > 3200) {
+        if (this.player.getPosition().x > 600) {
             this.addText(550, 50, 'LEVEL COMPLETE');
+            Storage.openLevel("World " + this.world, this.levelConfig.defaultExit)
             var that = this;
             var id = window.setInterval(function() {
                 if (that.time <= 0) {
