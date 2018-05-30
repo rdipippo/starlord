@@ -83,7 +83,7 @@ export default class StarLordScene extends Phaser.Scene {
         //  The platforms group contains the ground and the 2 ledges we can jump on
         this.platforms = new Platforms(this, this.levelConfig.platforms);
 
-        this.ground = new Ground(this);
+        this.ground = new Ground(this, this.levelConfig.ground);
 
         this.enemyGroup = new EnemyGroup(this, this.levelConfig.enemies);
         this.stars = new Stars(this);
@@ -111,7 +111,7 @@ export default class StarLordScene extends Phaser.Scene {
             return;
         }
 
-        if (this.player.getPosition().x > 600) {
+        if (this.player.getPosition().x > 3200) {
             this.addText(550, 50, 'LEVEL COMPLETE');
             Storage.openLevel("World " + this.world, this.levelConfig.defaultExit)
             var that = this;

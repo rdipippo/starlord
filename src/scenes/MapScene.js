@@ -55,10 +55,6 @@ export default class MapScene extends Phaser.Scene {
                 this.add.image(level.mapPosition.x, level.mapPosition.y, 'star');
                 lastLevelOpened = level;
             }
-
-            //if (level.index == 1 || level.index == this.openLevels.length) {
-                //this.player = this.add.sprite(level.mapPosition.x, level.mapPosition.y, 'dude');
-            //}
         });
 
         this.player = this.add.sprite(lastLevelOpened.mapPosition.x, lastLevelOpened.mapPosition.y, 'dude');

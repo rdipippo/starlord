@@ -1,15 +1,16 @@
 import SpriteGroup from './SpriteGroup';
 
 export default class Ground extends SpriteGroup {
-    constructor(scene) {
+     constructor(scene, config) {
         super(scene);
 
-        for (var i = 200; i <= 3600; i += 300) {
-            var groundSprite = this.group.create(i, 568, 'ground');
+        let that = this;
+        config.forEach(function(groundPiece) {
+            var groundSprite = that.group.create(groundPiece, 590, 'ground');
             groundSprite.body.allowGravity = false;
             groundSprite.body.immovable = true;
-        }
-    }
+        });
+     }
 
      handleGround() {
 
