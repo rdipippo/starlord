@@ -86,7 +86,7 @@ export default class StarLordScene extends Phaser.Scene {
         this.ground = new Ground(this, this.levelConfig.ground);
 
         this.enemyGroup = new EnemyGroup(this, this.levelConfig.enemies);
-        this.stars = new Stars(this);
+        this.stars = new Stars(this, this.levelConfig.stars);
         this.bombs = new Bombs(this, this.player.sprite);
         this.bullets = this.player.bullets;
 
@@ -176,6 +176,7 @@ export default class StarLordScene extends Phaser.Scene {
         this.platforms.update();
         this.player.update();
         this.stars.update();
+        this.enemyGroup.update();
     }
 
     addText(x, y, text) {

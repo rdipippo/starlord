@@ -2,49 +2,19 @@
     "level": 1,
     "defaultExit": "Level 2",
     "time": 300,
-    "enemies": [{"x": 470, "y": 450}],
-    "bombs": { "count": 2 },
+    "enemies": [
+        {"x": 600 , "y": 450, "velocityX": -50},
+        {"x": 1080 , "y": 400, "velocityX": 0, "minimumX": 980, "maximumX": 1080, "velocityX": -50 }
+    ],
+    "bombs": { "count": 0 },
+    "stars": [
+        { "x": 400, "y": 200 }
+    ],
     "platforms": [
-        {
-            "x": 600,
-            "y": 400,
-            "movement": {
-                "minX": 300,
-                "maxX": 500
-            }
-        },
-        {
-            "x": 50,
-            "y": 250,
-            "movement": {
-                "minX": 50,
-                "maxX": 350
-            }
-        },
-        {
-            "x": 750,
-            "y": 220,
-            "movement": {
-                "minX": 550,
-                "maxX": 750
-            }
-        },
-        {
-            "x": 1000,
-            "y": 75,
-            "movement": {
-                "minX": 850,
-                "maxX": 1200
-            }
-        },
-        {
-            "x": 1200,
-            "y": 250,
-            "movement": {
-                "minX": 1100,
-                "maxX": 1300
-            }
-        }
+        { "x": 400, "y": 425 },
+        { "x": 1200, "y": 200},
+        { "x": 1100, "y": 300},
+        { "x": 1000, "y": 450}
     ],
     "playerStart": {"x": 400, "y":450},
     "ground": [200, 400, 600, 900, 1100, 1300, 1600, 1900, 2300, 2600, 2900, 3100]

@@ -5,22 +5,29 @@ export default class EnemyGroup extends SpriteGroup {
     constructor(scene, config) {
         super(scene);
 
+        this.enemies = [];
+
         this.config = config;
 
-        this.config.forEach((enemy) => {
-            this.group.create(470, 450, 'enemy');
-        });
-
         this.scene.anims.create({
-            key: 'lookMenacing',
-            frameRate: 10,
-            frames: this.scene.anims.generateFrameNumbers('enemy', { start: 0, end: 1 }),
-            repeat: -1
-        });
+                    key: 'lookMenacing',
+                    frameRate: 10,
+                    frames: this.scene.anims.generateFrameNumbers('enemy', { start: 0, end: 1 }),
+                    repeat: -1
+                });
 
-        this.group.children.iterate(function (child) {
-            child.setCollideWorldBounds(true);
-            child.anims.play('lookMenacing', true);
+        this.config.forEach((enemy) => {
+            let renderedEnemy = this.group.create(enemy.x, enemy.y, 'enemy');
+            renderedEnemy.setCollideWorldBounds(true);
+            renderedEnemy.anims.play('lookMenacing', true);
+            renderedEnemy.body.setVelocityX(enemy.velocityX);
+
+            if (enemy.minimumX !== undefined) {
+                renderedEnemy.minimumX = enemy.minimumX;
+                renderedEnemy.maximumX = enemy.maximumX;
+            }
+
+            this.enemies.push(renderedEnemy);
         });
     }
 
@@ -38,5 +45,15 @@ export default class EnemyGroup extends SpriteGroup {
 
     handleBullets() {
         this.scene.physics.add.overlap(this.scene.player.gun.bullets, this.group, super.destroyedByBullet, null, this);
+    }
+
+    update() {
+        this.enemies.forEach((enemy) => {
+            if (enemy.x <= enemy.minimumX) {
+                enemy.body.setVelocityX(100);
+            } else if (enemy.x > enemy.maximumX) {
+                enemy.body.setVelocityX(-100);
+            }
+        });
     }
 }

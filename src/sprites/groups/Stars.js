@@ -2,31 +2,29 @@ import Phaser from 'phaser';
 import SpriteGroup from './SpriteGroup';
 
 export default class Stars extends SpriteGroup {
-    constructor(scene) {
-        super(scene, {
-                   key: 'star',
-                   repeat: 25,
-                   setXY: { x: 12, y: 0, stepX: 70 }
-                 });
+    constructor(scene, config) {
+        super(scene);
 
-        this.group.children.iterate(function (child) {
-            //  Give each star a slightly different bounce
-            //child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            child.setCollideWorldBounds(true);
+        this.config = config;
+
+        this.config.forEach((star) => {
+            let renderedStar = this.group.create(star.x, star.y, 'star');
+            renderedStar.body.allowGravity = false;
+            renderedStar.setCollideWorldBounds(true);
         });
     }
 
     update() {
-        const result = this.group.children.entries.filter(star => star.body.velocity.y > 0);
-        result.forEach(function (child) {
+        //const result = this.group.children.entries.filter(star => star.body.velocity.y > 0);
+        //result.forEach(function (child) {
             //  Give each star a slightly different bounce
             //child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            if (child.body.y >= 400) {
+        /*    if (child.body.y >= 400) {
                 child.body.allowGravity = false;
                 child.body.immovable = true;
                 child.body.velocity.y = 0;
             }
-        });
+        });*/
     }
 
     haveAllStarsBeenCollected() {

@@ -9,7 +9,14 @@ export default class Platforms extends SpriteGroup {
         this.platforms = [];
 
         this.config.forEach((platform) => {
-            let ref = this.createPlatform(platform.x, platform.y, platform.movement.minX, platform.movement.maxX);
+            let ref;
+
+            if (platform.hasOwnProperty("movement")) {
+                ref = this.createPlatform(platform.x, platform.y, platform.movement.minX, platform.movement.maxX);
+            } else {
+                ref = this.createPlatform(platform.x, platform.y);
+            }
+
             this.platforms.push(ref);
         });
     }
