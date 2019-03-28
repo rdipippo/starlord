@@ -6,6 +6,9 @@ export default class Player {
 
         this.standingOnPlatform = false;
         this.sprite = this.scene.physics.add.sprite(x, y, key).setBounce(0.2).setCollideWorldBounds(true);
+        // TODO control player gravity here
+        this.sprite.body.gravity.y = 0;
+
         this.gun = new Gun(scene, this);
 
         this.scene.anims.create({

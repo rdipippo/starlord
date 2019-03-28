@@ -51,6 +51,6 @@
     "webpack-hot-middleware": "^2.22.2"
   },
   "dependencies": {
-    "phaser": "^3.3.0"
+    "phaser": "^3.16.2"
   }
 }

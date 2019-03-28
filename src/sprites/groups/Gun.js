@@ -10,7 +10,7 @@ export default class Gun {
     shoot() {
         let velocity, xPos;
 
-        if (this.bullets.countActive(true) <= 5) {
+        if (this.bullets.countActive(true) < 1) {
             if (this.player.isFacingLeft()) {
                 velocity = -200;
                 xPos = this.player.sprite.x - 25;
@@ -20,6 +20,7 @@ export default class Gun {
             }
 
             var bullet = this.bullets.create(xPos, this.player.sprite.y, 'star');
+            bullet.initialX = xPos;
             bullet.setVelocity(velocity, 0);
             bullet.setCollideWorldBounds(false);
             bullet.body.allowGravity = false;
@@ -31,7 +32,7 @@ export default class Gun {
 
         this.bullets.children.iterate(function(bullet) {
             if (bullet.visible) {
-                if ( bullet.x >= that.player.sprite.x + 160 || bullet.x <= that.player.sprite.x - 160) {
+                if ( bullet.x >= bullet.initialX + 160 || bullet.x <= bullet.initialX - 160) {
                     bullet.visible = false;
                     bullet.active = false;
                 } else if (bullet.x <=0 || bullet.y >=800) {

@@ -76,6 +76,7 @@ export default class StarLordScene extends Phaser.Scene {
 
         this.scoreText = this.addText(16, 16, 'Score: 0');
         this.levelText = this.addText(16, 50, 'Level: ' + this.level);
+        this.debugText = this.addText(16, 100, 'x: ' + this.input.activePointer.x + ' y: ' + this.input.activePointer.y);
         this.timerText = this.addText(585, 16, 'Time: ' + this.time);
 
         this.player = new Player(this, this.levelConfig.playerStart.x, this.levelConfig.playerStart.y, 'dude');
@@ -94,6 +95,8 @@ export default class StarLordScene extends Phaser.Scene {
     }
 
     update() {
+        this.debugText = this.debugText.setText('x: ' + this.input.activePointer.worldX + ' y: ' + this.input.activePointer.worldY);
+
         if (this.skipUpdate) {
             return;
         }
